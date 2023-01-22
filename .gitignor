@@ -1,0 +1,16 @@
+# Python
+*.pyc
+*~
+__pycache__
+
+# Env
+.env
+wpvenv/
+myvenv/
+venv/
+
+# Database
+db.sqlite3
+
+# Static folder at project root
+/static/
