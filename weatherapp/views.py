@@ -56,9 +56,6 @@ def index(request):
         list_of_data4 = json.loads(source4)
 
         data = {
-
-                "all": str(list_of_data),
-                "all2": str(list_of_data2),
                 "period": str(list_of_data2['hourly']),
                 "time": str(list_of_data2['hourly']['time'][::]).replace("', '", " ").replace("'", ""),
                 "temperature": str(list_of_data2['hourly']['temperature_2m'][::]),
@@ -69,8 +66,6 @@ def index(request):
                 "lat": str(list_of_data['results'][0]['latitude']),
                 "lon": str(list_of_data['results'][0]['longitude']),
 
-                "all3": str(list_of_data3),
-                "all4": str(list_of_data4),
                 "period2": str(list_of_data4['hourly']),
                 "time2": str(list_of_data4['hourly']['time'][::]).replace("', '", " ").replace("'", ""),
                 "temperature2": str(list_of_data4['hourly']['temperature_2m'][::]),
@@ -81,7 +76,6 @@ def index(request):
                 "lat2": str(list_of_data3['results'][0]['latitude']),
                 "lon2": str(list_of_data3['results'][0]['longitude']),
         }
-
 
         df = pd.DataFrame(data=data, index=[0])
         temp = df['temperature'][0].replace("', '", ", ").replace("[", "").replace("]", "").replace("None", "nan").replace("'", "").replace(",", "")
@@ -94,42 +88,24 @@ def index(request):
         result2 = list(map(float, t2))
 
         fig = go.Figure()
-
         fig.add_trace(go.Scatter(x=d, y=result,
                                  mode='lines',
                                  name=df['name'][0]))
         fig.add_trace(go.Scatter(x=d, y=result2,
                                  mode='lines',
                                  name=df['name2'][0]))
-
         fig.update_layout(
             yaxis_title='Temperature, °C',
             xaxis_title='Date',
             title='Temperature comparison'
         )
 
-
         fig.write_html("weatherapp/templates/weatherapp/graph.html")
-
-
-
-
-
-
 
     else:
         data = {}
 
     return render(request, "weatherapp/index.html", data)
-
-
-with open('weatherapp/templates/weatherapp/graph.html', 'r') as file:
-            a = file.readlines()
-            a.insert(0, "{% block graph %}\n")
-            a.append('{% endblock %}')
-
-with open('weatherapp/templates/weatherapp/graph.html', 'w') as file:
-        file.writelines(a)
 
 
 def graph(request):
