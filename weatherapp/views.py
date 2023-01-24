@@ -1,7 +1,7 @@
 import json
 import urllib.request
 from urllib.error import HTTPError
-
+from urllib.parse import quote
 import pandas as pd
 import plotly.graph_objs as go
 from django.shortcuts import render
@@ -19,22 +19,33 @@ def index(request):
 
 
 
-        c = city.split()
-        city = '%20'.join(c)
+        city = city.split()
+        city = '%20'.join(city)
 
-        c2 = city2.split()
-        city2 = '%20'.join(c2)
 
-        source = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city).read()
-        source3 = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city2).read()
+
+        city2 = city2.split()
+        city2 = '%20'.join(city2)
+
+
+        try:
+            source = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city).read()
+        except UnicodeEncodeError:
+            city = quote(city)
+            source = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city + '&language=ru').read()
+        try:
+            source3 = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city2).read()
+        except UnicodeEncodeError:
+            city2 = quote(city2)
+            source3 = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city2 + '&language=ru').read()
 
         list_of_data = json.loads(source)
         list_of_data3 = json.loads(source3)
 
         try:
             source2 = urllib.request.urlopen('https://archive-api.open-meteo.com/v1/archive?latitude='+str(list_of_data['results'][0]['latitude'])+'&longitude='+str(list_of_data['results'][0]['longitude'])+'&start_date='+start_date+'&end_date='+end_date+'&hourly=temperature_2m').read()
-        except KeyError as kerr:
-            return render(request, "weatherapp/index.html", {'error': "Выберите 2 города"})
+        except KeyError:
+            return render(request, "weatherapp/index.html", {'error': "Выберите 2 существующих города"})
         except HTTPError as err:
             if err.code == 400:
                 return render(request, "weatherapp/index.html", {'error': "Выберите корректные даты"})
@@ -46,7 +57,7 @@ def index(request):
         try:
             source4 = urllib.request.urlopen('https://archive-api.open-meteo.com/v1/archive?latitude='+str(list_of_data3['results'][0]['latitude'])+'&longitude='+str(list_of_data3['results'][0]['longitude'])+'&start_date='+start_date+'&end_date='+end_date+'&hourly=temperature_2m').read()
         except KeyError as kerr:
-            return render(request, "weatherapp/index.html", {'error': "Выберите 2 города"})
+            return render(request, "weatherapp/index.html", {'error': "Выберите 2 существующих города"})
         except HTTPError as err:
             if err.code == 400:
                 return render(request, "weatherapp/index.html", {'error': "Выберите корректные даты"})
