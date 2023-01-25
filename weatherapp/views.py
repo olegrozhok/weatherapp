@@ -5,6 +5,8 @@ from urllib.parse import quote
 import pandas as pd
 import plotly.graph_objs as go
 from django.shortcuts import render
+import datetime
+from datetime import datetime, timedelta
 from .models import City
 
 
@@ -13,8 +15,12 @@ def index(request):
     if request.method == 'POST':
         city = request.POST['city']
         city2 = request.POST['city2']
-        end_date = request.POST['end_date']
-        start_date = request.POST['start_date']
+        if request.POST.get('last_month'):
+            end_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            start_date = (datetime.datetime.now() - timedelta(days=31)).strftime("%Y-%m-%d")
+        else:
+            end_date = request.POST['end_date']
+            start_date = request.POST['start_date']
 
         try:
             city = city.split()
