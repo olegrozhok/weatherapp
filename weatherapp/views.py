@@ -5,8 +5,8 @@ from urllib.parse import quote
 import pandas as pd
 import plotly.graph_objs as go
 from django.shortcuts import render
-import datetime
 from datetime import datetime, timedelta
+import datetime
 from .models import City
 
 
