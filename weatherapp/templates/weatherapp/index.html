@@ -50,7 +50,7 @@
         <br/><br/>
         <span class="label"> End   date: <input type="date" name="end_date" value="{{ end_date }}"></span>
         <br/><br/>
-       <button type="submit" class="btn btn-primary">Search</button>
+       <button type="submit" class="btn text-white" style="background-color: #0088CC;">Search</button>
       </div>
     </form>
   </nav>
@@ -77,9 +77,18 @@
           <h6><span class="badge text-dark">Longitude :</span> {{lon2}}</h6>
         </div>
         </div>
+        <div>
+          <a
+          class="btn text-white btn-floating m-1"
+          style="background-color: #0088CC;"
+          href="{% url 'graph' %}"
+          target="_blank"
+          role="button"
+          >Open graph in new tab</a>
+        </div>
         </div>
         <div class="col-md-9">
-           <div id="includeHtml" style="height: 100%; "></div>
+            <div id="includeHtml" style="height: 100%; "></div>
         </div>
       </div>
       </div>

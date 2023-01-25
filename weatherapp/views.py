@@ -5,7 +5,6 @@ from urllib.parse import quote
 import pandas as pd
 import plotly.graph_objs as go
 from django.shortcuts import render
-
 from .models import City
 
 
@@ -17,27 +16,25 @@ def index(request):
         end_date = request.POST['end_date']
         start_date = request.POST['start_date']
 
-
-
-        city = city.split()
-        city = '%20'.join(city)
-
-
-
-        city2 = city2.split()
-        city2 = '%20'.join(city2)
-
-
         try:
+            city = city.split()
+            city = '%20'.join(city)
             source = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city).read()
         except UnicodeEncodeError:
+            city = request.POST['city']
             city = quote(city)
-            source = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city + '&language=ru').read()
+            source = urllib.request.urlopen(
+                'https://geocoding-api.open-meteo.com/v1/search?name=' + city + '&language=ru').read()
+
         try:
+            city2 = city2.split()
+            city2 = '%20'.join(city2)
             source3 = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city2).read()
         except UnicodeEncodeError:
+            city2 = request.POST['city2']
             city2 = quote(city2)
-            source3 = urllib.request.urlopen('https://geocoding-api.open-meteo.com/v1/search?name=' + city2 + '&language=ru').read()
+            source3 = urllib.request.urlopen(
+                'https://geocoding-api.open-meteo.com/v1/search?name=' + city2 + '&language=ru').read()
 
         list_of_data = json.loads(source)
         list_of_data3 = json.loads(source3)
